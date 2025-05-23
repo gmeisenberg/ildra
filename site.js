@@ -1,19 +1,21 @@
-const locate = () => {
-  const url = '/ip.php';
+const ipGeoApi = 'https://ipwho.is';
 
-  const printData = (data) => {
-    const el = document.createElement('code');
-    el.innerHTML = data;
-    document.body.appendChild(el);
-  };
+async function fetchData() {
+  try {
+    const ipGeoResponse = await fetch(ipGeoApi);
+    const ipGeo = await ipGeoResponse.json();
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-      printData(data);
-    })
-    .catch(error => console.log(error));
+    printData(ipGeo.ip);
+    console.log(ipGeo);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+const printData = (data) => {
+  const el = document.createElement('code');
+  el.innerHTML = data;
+  document.body.appendChild(el);
 };
 
-document.addEventListener('DOMContentLoaded', locate);
+document.addEventListener('DOMContentLoaded', fetchData);
