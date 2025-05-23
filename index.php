@@ -1,46 +1,17 @@
-<?php
-$title = str_replace('www.', '', $_SERVER['HTTP_HOST']);
-$ip_addr = $_SERVER['REMOTE_ADDR'];
-?>
-
 <!DOCTYPE html>
 <html>
   <head>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="ildra.com">
-    <title><?php echo $title; ?></title>
-    <style>
-      html, body { 
-        height: 100%;
-      }
-      html {
-        font-size: 16px;
-        font-size: 62.5%;
-      }
-      body {
-        font-size: 1.6rem;
-        background: #000 url(/skyline.jpg) no-repeat top center / cover;
-        margin: 0;
-        overscroll-behavior: none;
-      }
-      code {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        display: inline-block;
-        color: #f5d67b;
-        background: rgb(0,0,0,0.8);
-        font-size: 1.1rem;
-        line-height: 1.4;
-        margin: 1vh;
-        padding: 8px 10px;
-        border-radius: 4px;
-      }
-    </style>
+    <title>ildra.com</title>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ildra.com">
+    <meta property="og:url" content="https://www.ildra.com">
+    <meta property="og:image" content="https://www.ildra.com/skyline.jpg">
+    <meta property="og:description" content="ildra.com">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <script src="/site.js"></script>
 	</head>
 	<body>
-    <?php /*
-    <code><?php echo $ip_addr; ?></code>
-    */ ?>
   </body>
 </html>
