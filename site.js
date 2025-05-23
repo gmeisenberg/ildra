@@ -1,19 +1,46 @@
-const ipApi = 'https://ipwho.is';
-const weatherApi = 'https://api.open-meteo.com/v1/forecast?current=temperature_2m,relative_humidity_2m,is_day,precipitation,weather_code,cloud_cover,wind_speed_10m&timezone=auto&forecast_days=1&wind_speed_unit=mph';
-
-async function fetchData() {
+const fetchData = async () => {
   try {
-    const ipResponse = await fetch(ipApi);
-    const ipData = await ipResponse.json();
+    const ipData = await getIPData();
+    console.log(ipData);
+    
+    const coords = await getGPSData().then(pos => {
+      return { lat: pos.latitude, lon: pos.longitude }
+    }).catch(error => {
+      console.log(error);
+      return { lat: ipData.latitude, lon: ipData.longitude }
+    });
+    console.log(coords);
+    
+    const weatherData = await getWeatherData(coords);
+    console.log(weatherData);
 
-    const weatherResponse = await fetch(`${weatherApi}&latitude=${ipData.latitude}&longitude=${ipData.longitude}`);
-    const weatherData = await weatherResponse.json();
-
-    //printData(ipData.ip);
-    console.log(ipData, weatherData);
+    printData(ipData.ip);
   } catch (error) {
-    console.error('Error:', error);
+    console.error(error);
   }
+}
+
+const getIPData = async () => {
+  const response = await fetch('https://ipwho.is');
+  return await response.json();
+}
+
+const getGPSData = () => {
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords), reject);
+    } else {
+      reject("Geolocation not supported.");
+    }
+  });
+}
+
+const getWeatherData = async (coords) => {
+  const apiKey = '7b75455de10dd6e742784781ec827118';
+  const lat = coords.lat;
+  const lon = coords.lon;
+  const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`);
+  return await response.json();
 }
 
 const printData = (data) => {
