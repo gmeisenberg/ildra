@@ -39,6 +39,8 @@ $ip_addr = $_SERVER['REMOTE_ADDR'];
     </style>
 	</head>
 	<body>
+    <?php /*
     <code><?php echo $ip_addr; ?></code>
+    */ ?>
   </body>
 </html>
