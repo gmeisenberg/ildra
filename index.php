@@ -10,7 +10,7 @@
     <meta property="og:image" content="https://www.ildra.com/assets/img/skyline.jpg">
     <meta property="og:description" content="ildra.com">
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
-    <script src="/assets/js/site.js"></script>
+    <script src="/assets/js/main.js"></script>
 	</head>
 	<body>
   </body>
