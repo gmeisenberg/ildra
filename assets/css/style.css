@@ -7,7 +7,7 @@ html {
 }
 body {
   font-size: 1.6rem;
-  background: #000 url(/skyline.jpg) no-repeat top center / cover;
+  background: #000 url(/assets/img/skyline.jpg) no-repeat top center / cover;
   margin: 0;
   overscroll-behavior: none;
 }

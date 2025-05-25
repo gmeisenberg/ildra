@@ -7,10 +7,10 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="ildra.com">
     <meta property="og:url" content="https://www.ildra.com">
-    <meta property="og:image" content="https://www.ildra.com/skyline.jpg">
+    <meta property="og:image" content="https://www.ildra.com/assets/img/skyline.jpg">
     <meta property="og:description" content="ildra.com">
-    <link rel="stylesheet" type="text/css" href="/style.css">
-    <script src="/site.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+    <script src="/assets/js/site.js"></script>
 	</head>
 	<body>
   </body>
