@@ -36,10 +36,14 @@ const getGPSData = () => {
 }
 
 const getWeatherData = async (coords) => {
-  const apiKey = '7b75455de10dd6e742784781ec827118';
-  const lat = coords.lat;
-  const lon = coords.lon;
-  const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`);
+  const data = new FormData();
+  data.append('lat', coords.lat);
+  data.append('lon', coords.lon);
+
+  const response = await fetch('/api/weather/', {
+    method: 'POST',
+    body: data 
+  });
   return await response.json();
 }
 
