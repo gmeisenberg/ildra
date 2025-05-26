@@ -1,22 +1,39 @@
+const logger = {};
+logger.log = (msg, ...rest) => (typeof debug != 'undefined' && debug) ? console.log(msg, ...rest) : '';
+logger.error = (msg, ...rest) => console.error(msg, ...rest);
+
+document.addEventListener('DOMContentLoaded', () => {
+  setClock();
+  fetchData();
+});
+
+const setClock = () => {
+  const updateClock = () => {
+    const d = new Date();
+    document.getElementById('clock').textContent = d;
+  }
+  const el = Object.assign(document.createElement('div'), { id: 'clock' });
+  printData(el);
+  setInterval(updateClock, 1000);
+}
+
 const fetchData = async () => {
   try {
     const ipData = await getIPData();
-    console.log(ipData);
+    logger.log(ipData);
     
     const coords = await getGPSData().then(pos => {
       return { lat: pos.latitude, lon: pos.longitude }
     }).catch(error => {
-      console.log(error);
+      logger.log(error);
       return { lat: ipData.latitude, lon: ipData.longitude }
     });
-    console.log(coords);
+    logger.log(coords);
     
     const weatherData = await getWeatherData(coords);
-    console.log(weatherData);
-
-    printData(ipData.ip);
+    logger.log(weatherData);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 }
 
@@ -47,10 +64,6 @@ const getWeatherData = async (coords) => {
   return await response.json();
 }
 
-const printData = (data) => {
-  const el = document.createElement('main');
-  el.innerText = data;
-  document.body.appendChild(el);
-};
-
-document.addEventListener('DOMContentLoaded', fetchData);
+const printData = (data, ...rest) => {
+  document.querySelector('main').append(data, ...rest);
+}
