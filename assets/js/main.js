@@ -48,8 +48,8 @@ const getWeatherData = async (coords) => {
 }
 
 const printData = (data) => {
-  const el = document.createElement('code');
-  el.innerHTML = data;
+  const el = document.createElement('main');
+  el.innerText = data;
   document.body.appendChild(el);
 };
 

@@ -11,14 +11,14 @@ body {
   margin: 0;
   overscroll-behavior: none;
 }
-code {
+main {
   position: absolute;
   bottom: 0;
-  right: 0;
+  left: 0;
   display: inline-block;
   color: #f5d67b;
-  background: rgb(0,0,0,0.8);
-  font-size: 1.1rem;
+  font-family: Courier New;
+  font-size: 1.4rem;
   line-height: 1.4;
   margin: 1vh;
   padding: 8px 10px;
