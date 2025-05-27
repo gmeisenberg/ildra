@@ -54,10 +54,10 @@ const fetchData = async () => {
       .then(pos => {
         return { lat: pos.latitude, lon: pos.longitude }
       }).catch(error => {
-        return { lat: ipData.latitude, lon: ipData.longitude }
         logger.log(error);
+        return { lat: ipData.latitude, lon: ipData.longitude }
       });
-    appendElement({ id: 'coords', textContent: `${coords.lat} ${coords.lon}` });
+    appendElement({ id: 'coords', textContent: Object.values(coords).map(n => n.toFixed(5)).join(' ') });
     logger.log(coords);
     
     const weatherData = await getWeatherData(coords);
