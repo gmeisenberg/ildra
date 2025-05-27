@@ -7,17 +7,24 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchData();
 });
 
-const render = (...content) => {
-  const selector = 'main';
-  return new Promise((resolve, reject) => {
-    const el = document.querySelector(selector);
-    if (!el) {
-      reject(`Element with selector "${selector}" not found.`);
+const createElement = async (type, options = {}) => {
+  const element = Object.assign(document.createElement(type), options);
+  return element;
+}
+
+const appendElement = async (options = {}, type = 'div', selector = 'main') => {
+  try {
+    const container = document.querySelector(selector);
+    if (!container) {
+      logger.error(`Element with selector "${selector}" not found.`);
     } else {
-      el.append(...content);
-      resolve('Content rendered.');
+      const element = await createElement(type, options);
+      container.append(element);
+      logger.log('Appended:', element);
     }
-  });
+  } catch (error) {
+    logger.error(error);
+  }
 }
 
 const setClock = () => {
@@ -31,18 +38,16 @@ const setClock = () => {
     document.getElementById('clock').textContent = datestring;
   }
 
-  const el = Object.assign(document.createElement('div'), { id: 'clock' });
-  render(el)
-    .then((result) => {
-      setInterval(updateClock, 1000);
-      logger.log(result, el.outerHTML);
-    })
-    .catch(error => logger.error(error));
+  appendElement({ id: 'clock' }).then(() => {
+    updateClock();
+    setInterval(updateClock, 1000);
+  });
 }
 
 const fetchData = async () => {
   try {
     const ipData = await getIPData();
+    appendElement({ id: 'ip', textContent: ipData.ip });
     logger.log(ipData);
     
     const coords = await getGPSData()
@@ -52,6 +57,7 @@ const fetchData = async () => {
         return { lat: ipData.latitude, lon: ipData.longitude }
         logger.log(error);
       });
+    appendElement({ id: 'coords', textContent: `${coords.lat} ${coords.lon}` });
     logger.log(coords);
     
     const weatherData = await getWeatherData(coords);
