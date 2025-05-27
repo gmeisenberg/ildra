@@ -1,20 +1,20 @@
 const logger = {};
-logger.log = (msg, ...rest) => (typeof debug != 'undefined' && debug) ? console.log(msg, ...rest) : '';
-logger.error = (msg, ...rest) => console.error(msg, ...rest);
+logger.log = (...msg) => (typeof debug != 'undefined' && debug) ? console.log(...msg) : '';
+logger.error = (...msg) => console.error(...msg);
 
 document.addEventListener('DOMContentLoaded', () => {
   setClock();
   fetchData();
 });
 
-const render = (content, ...rest) => {
+const render = (...content) => {
   const selector = 'main';
   return new Promise((resolve, reject) => {
     const el = document.querySelector(selector);
     if (!el) {
       reject(`Element with selector "${selector}" not found.`);
     } else {
-      el.append(content, ...rest);
+      el.append(...content);
       resolve('Content rendered.');
     }
   });
