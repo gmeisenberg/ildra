@@ -7,14 +7,37 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchData();
 });
 
+const render = (content, ...rest) => {
+  const selector = 'main';
+  return new Promise((resolve, reject) => {
+    const el = document.querySelector(selector);
+    if (!el) {
+      reject(`Element with selector "${selector}" not found.`);
+    } else {
+      el.append(content, ...rest);
+      resolve('Content rendered.');
+    }
+  });
+}
+
 const setClock = () => {
   const updateClock = () => {
     const d = new Date();
-    document.getElementById('clock').textContent = d;
+    const datestring = [
+      d.toLocaleDateString('en-US', { weekday: 'short' }),
+      d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+      d.toLocaleTimeString('en-US', { hour12: false })
+    ].join(' ');
+    document.getElementById('clock').textContent = datestring;
   }
+
   const el = Object.assign(document.createElement('div'), { id: 'clock' });
-  printData(el);
-  setInterval(updateClock, 1000);
+  render(el)
+    .then((result) => {
+      setInterval(updateClock, 1000);
+      logger.log(result, el.outerHTML);
+    })
+    .catch(error => logger.error(error));
 }
 
 const fetchData = async () => {
@@ -22,12 +45,13 @@ const fetchData = async () => {
     const ipData = await getIPData();
     logger.log(ipData);
     
-    const coords = await getGPSData().then(pos => {
-      return { lat: pos.latitude, lon: pos.longitude }
-    }).catch(error => {
-      logger.log(error);
-      return { lat: ipData.latitude, lon: ipData.longitude }
-    });
+    const coords = await getGPSData()
+      .then(pos => {
+        return { lat: pos.latitude, lon: pos.longitude }
+      }).catch(error => {
+        return { lat: ipData.latitude, lon: ipData.longitude }
+        logger.log(error);
+      });
     logger.log(coords);
     
     const weatherData = await getWeatherData(coords);
@@ -62,8 +86,4 @@ const getWeatherData = async (coords) => {
     body: data 
   });
   return await response.json();
-}
-
-const printData = (data, ...rest) => {
-  document.querySelector('main').append(data, ...rest);
 }
