@@ -1,8 +1,8 @@
 <?php
-$debug = true;
+$DEBUG = true;
 $version = '1.0';
-$qs = ($debug || $version) 
-    ? '?' . ($version ? 'v='.$version : '') . ($debug ? ($version ? '.' : '').time() : '')
+$qs = ($DEBUG || $version) 
+    ? '?' . ($version ? 'v='.$version : '') . ($DEBUG ? ($version ? '.' : '').time() : '')
     : '';
 ?>
 
@@ -17,10 +17,10 @@ $qs = ($debug || $version)
     <meta property="og:url" content="https://www.ildra.com">
     <meta property="og:image" content="https://www.ildra.com/assets/img/skyline.jpg">
     <meta property="og:description" content="ildra.com">
-    <?php if ($debug === true): ?>
-    <script>const debug = true;</script>
+    <?php if ($DEBUG === true): ?>
+    <script>const DEBUG = true;</script>
     <?php endif; ?>
-    <script src="/assets/js/main.js<?php echo $qs; ?>"></script>
+    <script type="module" src="/assets/js/main.js<?php echo $qs; ?>"></script>
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css<?php echo $qs; ?>" />
 	</head>
 	<body>

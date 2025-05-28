@@ -1,16 +1,9 @@
-const logger = {};
-logger.log = (...msg) => (typeof debug != 'undefined' && debug) ? console.log(...msg) : '';
-logger.error = (...msg) => console.error(...msg);
+import { logger, createElement, container } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   setClock();
   fetchData();
 });
-
-const createElement = async (type, options = {}) => {
-  const element = Object.assign(document.createElement(type), options);
-  return element;
-}
 
 const appendElement = async (options = {}, type = 'div', selector = 'main') => {
   try {
@@ -47,7 +40,10 @@ const setClock = () => {
 const fetchData = async () => {
   try {
     const ipData = await getIPData();
-    appendElement({ id: 'ip', textContent: ipData.ip });
+    container.appendChild(await createElement('div', {
+      id: 'ip',
+      textContent: ipData.ip
+    }));
     logger.log(ipData);
     
     const coords = await getGPSData()
@@ -57,7 +53,10 @@ const fetchData = async () => {
         logger.log(error);
         return { lat: ipData.latitude, lon: ipData.longitude }
       });
-    appendElement({ id: 'coords', textContent: Object.values(coords).map(n => n.toFixed(5)).join(' ') });
+    container.appendChild(await createElement('div', {
+      id: 'coords',
+      textContent: Object.values(coords).map(n => n.toFixed(5)).join(' ')
+    }));
     logger.log(coords);
     
     const weatherData = await getWeatherData(coords);
