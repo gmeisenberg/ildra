@@ -5,42 +5,26 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchData();
 });
 
-const appendElement = async (options = {}, type = 'div', selector = 'main') => {
-  try {
-    const container = document.querySelector(selector);
-    if (!container) {
-      logger.error(`Element with selector "${selector}" not found.`);
-    } else {
-      const element = await createElement(type, options);
-      container.append(element);
-      logger.log('Appended:', element);
-    }
-  } catch (error) {
-    logger.error(error);
-  }
-}
-
 const setClock = () => {
-  const updateClock = () => {
+  const updateClock = (node) => {
     const d = new Date();
     const datestring = [
       d.toLocaleDateString('en-US', { weekday: 'short' }),
       d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
       d.toLocaleTimeString('en-US', { hour12: false })
     ].join(' ');
-    document.getElementById('clock').textContent = datestring;
+    node.textContent = datestring;
   }
 
-  appendElement({ id: 'clock' }).then(() => {
-    updateClock();
-    setInterval(updateClock, 1000);
-  });
+  const node = container.appendChild(createElement('div', { id: 'clock' }));
+  updateClock(node);
+  setInterval(updateClock, 1000, node);
 }
 
 const fetchData = async () => {
   try {
     const ipData = await getIPData();
-    container.appendChild(await createElement('div', {
+    container.appendChild(createElement('div', {
       id: 'ip',
       textContent: ipData.ip
     }));
@@ -53,7 +37,7 @@ const fetchData = async () => {
         logger.log(error);
         return { lat: ipData.latitude, lon: ipData.longitude }
       });
-    container.appendChild(await createElement('div', {
+    container.appendChild(createElement('div', {
       id: 'coords',
       textContent: Object.values(coords).map(n => n.toFixed(5)).join(' ')
     }));
