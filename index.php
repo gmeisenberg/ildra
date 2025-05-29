@@ -27,7 +27,7 @@ $qs = ($DEBUG || $version)
     <main>
       <div id="clock"></div>
       <div id="weather"></div>
-      <div id="coords"></div>
+      <div id="position"></div>
       <div id="ip"></div>
     </main>
   </body>

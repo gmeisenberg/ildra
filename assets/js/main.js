@@ -2,7 +2,7 @@ import { logger, createElement, kToC } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   displayClock();
-  fetchData();
+  getData();
 });
 
 const displayClock = () => {
@@ -20,25 +20,34 @@ const displayClock = () => {
   setInterval(updateClock, 1000);
 }
 
-const fetchData = async () => {
+const getData = async () => {
   try {
-    const ipData = await fetchIPData();
+    const ipData = await getIPData();
     displayIP(ipData.ip);
 
-    const coords = {
+    /*
+    await getGPSData()
+      .then(pos => {
+        return { lat: pos.latitude, lon: pos.longitude }
+      }).catch(error => {
+        logger.log(error);
+        return { lat: ipData.latitude, lon: ipData.longitude }
+      });
+    */
+    const position = {
       lat: ipData.latitude,
       lon: ipData.longitude
     }
-    displayCoords(coords);
+    displayPosition(position);
     
-    const weatherData = await fetchWeatherData(coords);
+    const weatherData = await getWeatherData(position);
     displayWeather(weatherData);
   } catch (error) {
     logger.error(error);
   }
 }
 
-const fetchIPData = () => {
+const getIPData = () => {
   return fetch('https://ipwho.is')
     .then(response => response.json())
     .then(data => {
@@ -52,17 +61,37 @@ const displayIP = (data) => {
   node.textContent = data;
 }
 
-const displayCoords = (coords) => {
-  const node = document.getElementById('coords');
-  node.textContent = Object.values(coords).map(n => n.toFixed(5)).join(' ');
-  logger.log(coords);
+const getGPSData = () => {
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords), reject);
+    } else {
+      reject("Geolocation not supported.");
+    }
+  });
 }
 
-const fetchWeatherData = (coords) => {
+const displayPosition = (pos) => {
+  const node = document.getElementById('position');
+  node.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
+  logger.log(pos);
+
+  const btn = createElement('button', {
+    textContent: 'Geolocation',
+    onclick: geolocate
+  });
+  //node.appendChild(btn);
+}
+
+const geolocate = () => {
+  console.log('geolocate');
+}
+
+const getWeatherData = (pos) => {
   const url = '/api/weather/';
   const data = new FormData();
-  data.append('lat', coords.lat);
-  data.append('lon', coords.lon);
+  data.append('lat', pos.lat);
+  data.append('lon', pos.lon);
 
   const options = {
     method: 'POST',
@@ -92,23 +121,3 @@ const displayWeather = (data) => {
   });
   node.prepend(img);
 }
-
-const getGPSData = () => {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords), reject);
-    } else {
-      reject("Geolocation not supported.");
-    }
-  });
-}
-
-/*
-const coords = await getGPSData()
-  .then(pos => {
-    return { lat: pos.latitude, lon: pos.longitude }
-  }).catch(error => {
-    logger.log(error);
-    return { lat: ipData.latitude, lon: ipData.longitude }
-  });
-*/
