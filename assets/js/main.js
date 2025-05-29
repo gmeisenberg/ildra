@@ -25,23 +25,12 @@ const getData = async () => {
     const ipData = await getIPData();
     displayIP(ipData.ip);
 
-    /*
-    await getGPSData()
-      .then(pos => {
-        return { lat: pos.latitude, lon: pos.longitude }
-      }).catch(error => {
-        logger.log(error);
-        return { lat: ipData.latitude, lon: ipData.longitude }
-      });
-    */
     const position = {
       lat: ipData.latitude,
       lon: ipData.longitude
     }
-    displayPosition(position);
-    
-    const weatherData = await getWeatherData(position);
-    displayWeather(weatherData);
+    updatePosition(position);
+    updateWeather(position);
   } catch (error) {
     logger.error(error);
   }
@@ -61,30 +50,39 @@ const displayIP = (data) => {
   node.textContent = data;
 }
 
-const getGPSData = () => {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords), reject);
-    } else {
-      reject("Geolocation not supported.");
-    }
-  });
+const getGeolocationData = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const pos = {
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
+        }
+        updatePosition(pos);
+        updateWeather(pos);
+        logger.log(position);
+      },
+      error => logger.log(error)
+    );
+  } else {
+    logger.log("Geolocation not supported.");
+  }
 }
 
-const displayPosition = (pos) => {
+const updatePosition = (pos) => {
   const node = document.getElementById('position');
   node.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
   logger.log(pos);
 
-  const btn = createElement('button', {
-    textContent: 'Geolocation',
-    onclick: geolocate
+  navigator.permissions.query({name: 'geolocation'}).then(result => {
+    if (result.state === 'prompt') {
+      const btn = createElement('button', {
+        textContent: 'Geolocation',
+        onclick: () => getGeolocationData()
+      });
+      node.appendChild(btn);
+    }
   });
-  //node.appendChild(btn);
-}
-
-const geolocate = () => {
-  console.log('geolocate');
 }
 
 const getWeatherData = (pos) => {
@@ -106,7 +104,8 @@ const getWeatherData = (pos) => {
     });
 }
 
-const displayWeather = (data) => {
+const updateWeather = async (pos) => {
+  const data = await getWeatherData(pos);
   const city = data.name;
   const temp = kToC(data.main.temp);
   const description = data.weather[0].main;
