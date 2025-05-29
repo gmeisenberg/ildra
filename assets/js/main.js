@@ -1,12 +1,13 @@
-import { logger, createElement, container } from './utils.js';
+import { logger, createElement, kToC } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  setClock();
+  displayClock();
   fetchData();
 });
 
-const setClock = () => {
-  const updateClock = (node) => {
+const displayClock = () => {
+  const node = document.getElementById('clock');
+  const updateClock = () => {
     const d = new Date();
     const datestring = [
       d.toLocaleDateString('en-US', { weekday: 'short' }),
@@ -15,44 +16,81 @@ const setClock = () => {
     ].join(' ');
     node.textContent = datestring;
   }
-
-  const node = container.appendChild(createElement('div', { id: 'clock' }));
-  updateClock(node);
-  setInterval(updateClock, 1000, node);
+  updateClock();
+  setInterval(updateClock, 1000);
 }
 
 const fetchData = async () => {
   try {
-    const ipData = await getIPData();
-    container.appendChild(createElement('div', {
-      id: 'ip',
-      textContent: ipData.ip
-    }));
-    logger.log(ipData);
+    const ipData = await fetchIPData();
+    displayIP(ipData.ip);
+
+    const coords = {
+      lat: ipData.latitude,
+      lon: ipData.longitude
+    }
+    displayCoords(coords);
     
-    const coords = await getGPSData()
-      .then(pos => {
-        return { lat: pos.latitude, lon: pos.longitude }
-      }).catch(error => {
-        logger.log(error);
-        return { lat: ipData.latitude, lon: ipData.longitude }
-      });
-    container.appendChild(createElement('div', {
-      id: 'coords',
-      textContent: Object.values(coords).map(n => n.toFixed(5)).join(' ')
-    }));
-    logger.log(coords);
-    
-    const weatherData = await getWeatherData(coords);
-    logger.log(weatherData);
+    const weatherData = await fetchWeatherData(coords);
+    displayWeather(weatherData);
   } catch (error) {
     logger.error(error);
   }
 }
 
-const getIPData = async () => {
-  const response = await fetch('https://ipwho.is');
-  return await response.json();
+const fetchIPData = () => {
+  return fetch('https://ipwho.is')
+    .then(response => response.json())
+    .then(data => {
+      logger.log(data);
+      return data;
+    });
+}
+
+const displayIP = (data) => {
+  const node = document.getElementById('ip');
+  node.textContent = data;
+}
+
+const displayCoords = (coords) => {
+  const node = document.getElementById('coords');
+  node.textContent = Object.values(coords).map(n => n.toFixed(5)).join(' ');
+  logger.log(coords);
+}
+
+const fetchWeatherData = (coords) => {
+  const url = '/api/weather/';
+  const data = new FormData();
+  data.append('lat', coords.lat);
+  data.append('lon', coords.lon);
+
+  const options = {
+    method: 'POST',
+    body: data 
+  }
+
+  return fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      logger.log(data);
+      return data;
+    });
+}
+
+const displayWeather = (data) => {
+  const city = data.name;
+  const temp = kToC(data.main.temp);
+  const description = data.weather[0].main;
+  const icon = data.weather[0].icon;
+  
+  const node = document.getElementById('weather');
+  node.innerHTML = `${temp}&deg;C ${city}`;
+
+  const img = createElement('img', {
+    alt: description,
+    src: `https://openweathermap.org/img/wn/${icon}@2x.png`
+  });
+  node.prepend(img);
 }
 
 const getGPSData = () => {
@@ -65,14 +103,12 @@ const getGPSData = () => {
   });
 }
 
-const getWeatherData = async (coords) => {
-  const data = new FormData();
-  data.append('lat', coords.lat);
-  data.append('lon', coords.lon);
-
-  const response = await fetch('/api/weather/', {
-    method: 'POST',
-    body: data 
+/*
+const coords = await getGPSData()
+  .then(pos => {
+    return { lat: pos.latitude, lon: pos.longitude }
+  }).catch(error => {
+    logger.log(error);
+    return { lat: ipData.latitude, lon: ipData.longitude }
   });
-  return await response.json();
-}
+*/
