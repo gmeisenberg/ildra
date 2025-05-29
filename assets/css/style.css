@@ -18,7 +18,7 @@ body::before {
   left: 0;
   bottom: 0;
   right: 0;
-  background: linear-gradient(60deg, rgba(255,255,255,.5), transparent 50%);
+  background: linear-gradient(35deg, rgba(255,255,255,.6), transparent 50%);
 }
 main {
   position: absolute;
@@ -28,6 +28,7 @@ main {
   color: #1b1b1b;
   font-family: Courier New;
   font-size: 1.5rem;
+  font-size: clamp(1.6rem, calc(3rem - 1vw), 2.1rem);
   line-height: 1.4;
   margin: 1vh;
   padding: 8px 10px;
@@ -38,5 +39,5 @@ main {
   margin-left: 0.1em;
   margin-right: 0.7em;
   vertical-align: text-top;
-  scale: 2.5;
+  scale: 2;
 }
