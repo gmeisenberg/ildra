@@ -10,4 +10,4 @@ export const createElement = (type, options = {}) => {
   return element;
 }
 
-export const container = document.querySelector('main');
+export const kToC = (k) => parseInt(k - 273.15);
