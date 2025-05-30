@@ -25,10 +25,14 @@ const getData = async () => {
     const ipData = await getIPData();
     displayIP(ipData.ip);
 
-    const position = {
-      lat: ipData.latitude,
-      lon: ipData.longitude
-    }
+    const position = await getGeolocationData()
+      .then(pos => {
+        return { lat: pos.latitude, lon: pos.longitude }
+      }).catch(error => {
+        logger.log(error);
+        return { lat: ipData.latitude, lon: ipData.longitude }
+      });
+
     updatePosition(position);
     updateWeather(position);
   } catch (error) {
@@ -51,38 +55,23 @@ const displayIP = (data) => {
 }
 
 const getGeolocationData = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const pos = {
-          lat: position.coords.latitude,
-          lon: position.coords.longitude
-        }
-        updatePosition(pos);
-        updateWeather(pos);
-        logger.log(position);
-      },
-      error => logger.log(error)
-    );
-  } else {
-    logger.log("Geolocation not supported.");
-  }
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords), reject);
+  });
+}
+
+const getGeolocationPermission = () => {
+  return navigator.permissions.query({name: 'geolocation'})
+    .then(result => {
+      logger.log(result);
+      return result.state;
+    });
 }
 
 const updatePosition = (pos) => {
   const node = document.getElementById('position');
   node.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
   logger.log(pos);
-
-  navigator.permissions.query({name: 'geolocation'}).then(result => {
-    if (result.state === 'prompt') {
-      const btn = createElement('button', {
-        textContent: 'Geolocation',
-        onclick: () => getGeolocationData()
-      });
-      node.appendChild(btn);
-    }
-  });
 }
 
 const getWeatherData = (pos) => {
