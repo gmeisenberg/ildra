@@ -1,9 +1,18 @@
 import { logger, createElement, kToC } from './utils.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+const init = async () => {
   displayClock();
-  getData();
-});
+  
+  const ipData = await getIPData();
+  displayIP(ipData.ip);
+
+  const position = {
+    lat: ipData.latitude,
+    lon: ipData.longitude
+  }
+  getLocationData(position);
+}
+document.addEventListener('DOMContentLoaded', init);
 
 const displayClock = () => {
   const node = document.getElementById('clock');
@@ -20,20 +29,16 @@ const displayClock = () => {
   setInterval(updateClock, 1000);
 }
 
-const getData = async () => {
+const getLocationData = async (position, geolocate = false) => {
   try {
-    const ipData = await getIPData();
-    displayIP(ipData.ip);
-
-    const position = await getGeolocationData()
-      .then(pos => {
-        return { lat: pos.latitude, lon: pos.longitude }
-      }).catch(error => {
-        logger.log(error);
-        return { lat: ipData.latitude, lon: ipData.longitude }
-      });
-
-    updatePosition(position);
+    const permission = await getGeolocationPermission();
+    const showLocationBtn = !(geolocate || permission !== 'prompt');
+    if (geolocate || permission === 'granted') {
+      await getGeolocationData()
+        .then(pos => Object.assign(position, { lat: pos.latitude, lon: pos.longitude }))
+        .catch(error => logger.log(error));
+    }
+    updatePosition(position, showLocationBtn);
     updateWeather(position);
   } catch (error) {
     logger.error(error);
@@ -54,12 +59,6 @@ const displayIP = (data) => {
   node.textContent = data;
 }
 
-const getGeolocationData = () => {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords), reject);
-  });
-}
-
 const getGeolocationPermission = () => {
   return navigator.permissions.query({name: 'geolocation'})
     .then(result => {
@@ -68,10 +67,25 @@ const getGeolocationPermission = () => {
     });
 }
 
-const updatePosition = (pos) => {
+const getGeolocationData = async () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(position => resolve(position.coords), reject);
+  });
+}
+
+const updatePosition = async (pos, showLocationBtn) => {
   const node = document.getElementById('position');
   node.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
   logger.log(pos);
+  
+  if (showLocationBtn) {
+    const btn = createElement('button', {
+      id: 'geolocate',
+      innerHTML: '<span>&#x2316;</span>',
+      onclick: () => getLocationData(pos, true)
+    });
+    node.appendChild(btn);
+  }
 }
 
 const getWeatherData = (pos) => {
