@@ -20,11 +20,13 @@ body::before {
   right: 0;
   background: linear-gradient(35deg, rgba(255,255,255,.6), transparent 50%);
 }
+button {
+  cursor: pointer;
+}
 main {
   position: absolute;
   bottom: 0;
   left: 0;
-  display: inline-block;
   color: #1b1b1b;
   font-family: Courier New;
   font-size: 1.5rem;
@@ -34,25 +36,14 @@ main {
   padding: 8px 10px;
   border-radius: 4px;
 }
-main > * {
-  position: relative;
-}
-#weather img {
+#weather-icon {
   width: 1em;
   margin-left: 0.1em;
   margin-right: 0.7em;
   vertical-align: text-top;
   scale: 2;
 }
-#position button {
-  position: absolute;
-  top: -0.4rem;
-  left: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 1.8rem;
-  cursor: pointer;
+#geolocate span {
+  display: block;
+  rotate: -90deg;
 }

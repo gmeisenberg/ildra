@@ -26,8 +26,14 @@ $qs = ($DEBUG || $version)
 	<body>
     <main>
       <div id="clock"></div>
-      <div id="weather"></div>
-      <div id="position"></div>
+      <div id="weather">
+        <span id="city"></span>
+        <span id="conditions"></span>
+      </div>
+      <div id="position">
+        <span id="coords"></span>
+        <span id="geolocation"></span>
+      </div>
       <div id="ip"></div>
     </main>
   </body>
