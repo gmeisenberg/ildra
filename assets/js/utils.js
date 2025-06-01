@@ -5,6 +5,10 @@ export const logger = {
   error: (...msg) => console.error(...msg)
 };
 
+export const timeout = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const createElement = (type, options = {}) => {
   const element = Object.assign(document.createElement(type), options);
   return element;
