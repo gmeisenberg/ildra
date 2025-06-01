@@ -1,16 +1,17 @@
-import { logger, createElement, kToC } from './utils.js';
+import { logger, timeout, createElement, kToC } from './utils.js';
 
 const init = async () => {
   displayClock();
   
   const ipData = await getIPData();
-  displayIP(ipData.ip);
 
   const position = {
     lat: ipData.latitude,
     lon: ipData.longitude
   }
-  getLocationData(position);
+  await getLocationData(position);
+  await timeout(800);
+  displayIP(ipData.ip);
 }
 document.addEventListener('DOMContentLoaded', init);
 
@@ -38,8 +39,10 @@ const getLocationData = async (position, geolocate = false) => {
         .then(pos => Object.assign(position, { lat: pos.latitude, lon: pos.longitude }))
         .catch(error => logger.log(error));
     }
-    updatePosition(position, showLocationBtn);
-    updateWeather(position);
+    await timeout(800);
+    await updateWeather(position);
+    await timeout(800);
+    updatePosition(position, showLocationBtn)
   } catch (error) {
     logger.error(error);
   }
@@ -74,17 +77,20 @@ const getGeolocationData = async () => {
 }
 
 const updatePosition = async (pos, showLocationBtn) => {
-  const node = document.getElementById('position');
-  node.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
+  const nodeCoords = document.getElementById('coords');
+  nodeCoords.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
   logger.log(pos);
   
+  const nodeBtn = document.getElementById('geolocation');
+  nodeBtn.textContent = '';
+
   if (showLocationBtn) {
     const btn = createElement('button', {
       id: 'geolocate',
-      innerHTML: '<span>&#x2316;</span>',
+      innerHTML: '<span>&#x27A4;</span>',
       onclick: () => getLocationData(pos, true)
     });
-    node.appendChild(btn);
+    nodeBtn.appendChild(btn);
   }
 }
 
@@ -114,12 +120,16 @@ const updateWeather = async (pos) => {
   const description = data.weather[0].main;
   const icon = data.weather[0].icon;
   
-  const node = document.getElementById('weather');
-  node.innerHTML = `${temp}&deg;C ${city}`;
+  const nodeCity = document.getElementById('city');
+  nodeCity.innerHTML = city;
+
+  const nodeConditions = document.getElementById('conditions');
+  nodeConditions.innerHTML = `${temp}&deg;C`;
 
   const img = createElement('img', {
+    id: 'weather-icon',
     alt: description,
     src: `https://openweathermap.org/img/wn/${icon}@2x.png`
   });
-  node.prepend(img);
+  nodeConditions.prepend(img);
 }
