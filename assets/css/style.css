@@ -53,20 +53,29 @@ main > * {
   vertical-align: text-top;
   scale: 2;
 }
-#locate {
- position: relative;
-}
 #geolocate {
+  position: relative;
+  width: 2.5em;
+  height: 1em;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+}
+#geolocate::before,
+#geolocate::after {
   position: absolute;
   top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  width: 2em;
-  height: 2em;
-  border-width: 1px;
-  border-radius: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  font-size: 1.3em;
+  line-height: 1;
 }
-#geolocate span {
-  display: block;
+#geolocate::before {
+  content: "[\00a0\00a0\00a0\00a0\00a0]";
+}
+#geolocate::after {
+  content: "\27a4";
   rotate: -90deg;
+  transform-origin: center;
 }

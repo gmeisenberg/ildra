@@ -109,7 +109,6 @@ const displayLocationBtn = async () => {
   if ('prompt' === await getGeolocationPermission()) {
     const btn = createElement('button', {
       id: 'geolocate',
-      innerHTML: '<span>&#x27A4;</span>',
       onclick: () => updateLocationData()
     });
     DOM.locate.appendChild(btn);
