@@ -32,9 +32,7 @@ const displayClock = () => {
 
 const getLocationData = async (position, geolocate = false) => {
   try {
-    const permission = await getGeolocationPermission();
-    const showLocationBtn = !(geolocate || permission !== 'prompt');
-    if (geolocate || permission === 'granted') {
+    if (geolocate || 'granted' === await getGeolocationPermission()) {
       await getGeolocationData()
         .then(pos => Object.assign(position, { lat: pos.latitude, lon: pos.longitude }))
         .catch(error => logger.log(error));
@@ -42,6 +40,7 @@ const getLocationData = async (position, geolocate = false) => {
     await timeout(800);
     await updateWeather(position);
     await timeout(800);
+    const showLocationBtn = ('prompt' === await getGeolocationPermission());
     updatePosition(position, showLocationBtn)
   } catch (error) {
     logger.error(error);
