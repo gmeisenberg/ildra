@@ -1,4 +1,11 @@
-import { logger, timeout, createElement, kToC } from './utils.js';
+import { logger, timeout, getById, createElement, kToC } from './utils.js';
+
+const elClock = getById('clock');
+const elIp = getById('ip');
+const elCoords = getById('coords');
+const elLocation = getById('location');
+const elCity = getById('city');
+const elConditions = getById('conditions');
 
 const init = async () => {
   displayClock();
@@ -15,7 +22,6 @@ const init = async () => {
 document.addEventListener('DOMContentLoaded', init);
 
 const displayClock = () => {
-  const node = document.getElementById('clock');
   const updateClock = () => {
     const d = new Date();
     const datestring = [
@@ -23,7 +29,7 @@ const displayClock = () => {
       d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
       d.toLocaleTimeString('en-US', { hour12: false })
     ].join(' ');
-    node.textContent = datestring;
+    elClock.textContent = datestring;
   }
   updateClock();
   setInterval(updateClock, 1000);
@@ -39,10 +45,9 @@ const getIPData = () => {
 }
 
 const displayIP = async (data) => {
-  const node = document.getElementById('ip');
-  node.textContent = 'loading...';
+  elIp.textContent = 'loading...';
   await timeout(500);
-  node.textContent = data;
+  elIp.textContent = data;
 }
 
 const getLocationData = async (position) => {
@@ -91,29 +96,26 @@ const getGeolocationData = async () => {
 const updatePosition = async (pos) => {
   removeLocationBtn();
 
-  const nodeCoords = document.getElementById('coords');
-  nodeCoords.textContent = 'loading...';
+  elCoords.textContent = 'loading...';
   await timeout(800);
-  nodeCoords.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
+  elCoords.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
   
   displayLocationBtn();
 }
 
 const displayLocationBtn = async () => {
   if ('prompt' === await getGeolocationPermission()) {
-    const nodeBtn = document.getElementById('location');
     const btn = createElement('button', {
       id: 'geolocate',
       innerHTML: '<span>&#x27A4;</span>',
       onclick: () => updateLocationData()
     });
-    nodeBtn.appendChild(btn);
+    elLocation.appendChild(btn);
   }
 }
 
 const removeLocationBtn = () => {
-  const nodeBtn = document.getElementById('location');
-  nodeBtn.textContent = '';
+  elLocation.textContent = '';
 }
 
 const getWeatherData = (pos) => {
@@ -136,10 +138,8 @@ const getWeatherData = (pos) => {
 }
 
 const updateWeather = async (pos) => {
-  const nodeCity = document.getElementById('city');
-  const nodeConditions = document.getElementById('conditions');
-  nodeCity.textContent = 'loading...';
-  nodeConditions.textContent = '';
+  elCity.textContent = 'loading...';
+  elConditions.textContent = '';
 
   const data = await getWeatherData(pos);
   const city = data.name;
@@ -148,13 +148,13 @@ const updateWeather = async (pos) => {
   const icon = data.weather[0].icon;
   
   await timeout(800);
-  nodeCity.textContent = city;
+  elCity.textContent = city;
 
   const img = createElement('img', {
     id: 'weather-icon',
     alt: description,
     src: `https://openweathermap.org/img/wn/${icon}@2x.png`
   });
-  nodeConditions.innerHTML = `${temp}&deg;C`;
-  nodeConditions.prepend(img);
+  elConditions.innerHTML = `${temp}&deg;C`;
+  elConditions.prepend(img);
 }

@@ -9,6 +9,14 @@ export const timeout = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export const getById = (id) => {
+  const el = document.getElementById(id);
+  if (!el) {
+    throw new ReferenceError(`'${id}' not defined.`);
+  }
+  return el;
+}
+
 export const createElement = (type, options = {}) => {
   const element = Object.assign(document.createElement(type), options);
   return element;
