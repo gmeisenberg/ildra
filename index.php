@@ -32,7 +32,7 @@ $qs = ($DEBUG || $version)
       </div>
       <div id="position">
         <span id="coords"></span>
-        <span id="location"></span>
+        <span id="locate"></span>
       </div>
       <div id="ip"></div>
     </main>

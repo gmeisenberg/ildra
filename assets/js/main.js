@@ -1,11 +1,13 @@
 import { logger, timeout, getById, createElement, kToC } from './utils.js';
 
-const elClock = getById('clock');
-const elIp = getById('ip');
-const elCoords = getById('coords');
-const elLocation = getById('location');
-const elCity = getById('city');
-const elConditions = getById('conditions');
+const DOM = {
+  clock: getById('clock'),
+  ip: getById('ip'),
+  coords: getById('coords'),
+  locate: getById('locate'),
+  city: getById('city'),
+  conditions: getById('conditions')
+}
 
 const init = async () => {
   displayClock();
@@ -29,7 +31,7 @@ const displayClock = () => {
       d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
       d.toLocaleTimeString('en-US', { hour12: false })
     ].join(' ');
-    elClock.textContent = datestring;
+    DOM.clock.textContent = datestring;
   }
   updateClock();
   setInterval(updateClock, 1000);
@@ -45,9 +47,9 @@ const getIPData = () => {
 }
 
 const displayIP = async (data) => {
-  elIp.textContent = 'loading...';
+  DOM.ip.textContent = 'loading...';
   await timeout(500);
-  elIp.textContent = data;
+  DOM.ip.textContent = data;
 }
 
 const getLocationData = async (position) => {
@@ -96,9 +98,9 @@ const getGeolocationData = async () => {
 const updatePosition = async (pos) => {
   removeLocationBtn();
 
-  elCoords.textContent = 'loading...';
+  DOM.coords.textContent = 'loading...';
   await timeout(800);
-  elCoords.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
+  DOM.coords.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
   
   displayLocationBtn();
 }
@@ -110,12 +112,12 @@ const displayLocationBtn = async () => {
       innerHTML: '<span>&#x27A4;</span>',
       onclick: () => updateLocationData()
     });
-    elLocation.appendChild(btn);
+    DOM.locate.appendChild(btn);
   }
 }
 
 const removeLocationBtn = () => {
-  elLocation.textContent = '';
+  DOM.locate.textContent = '';
 }
 
 const getWeatherData = (pos) => {
@@ -138,8 +140,8 @@ const getWeatherData = (pos) => {
 }
 
 const updateWeather = async (pos) => {
-  elCity.textContent = 'loading...';
-  elConditions.textContent = '';
+  DOM.city.textContent = 'loading...';
+  DOM.conditions.textContent = '';
 
   const data = await getWeatherData(pos);
   const city = data.name;
@@ -148,13 +150,13 @@ const updateWeather = async (pos) => {
   const icon = data.weather[0].icon;
   
   await timeout(800);
-  elCity.textContent = city;
+  DOM.city.textContent = city;
 
   const img = createElement('img', {
     id: 'weather-icon',
     alt: description,
     src: `https://openweathermap.org/img/wn/${icon}@2x.png`
   });
-  elConditions.innerHTML = `${temp}&deg;C`;
-  elConditions.prepend(img);
+  DOM.conditions.innerHTML = `${temp}&deg;C`;
+  DOM.conditions.prepend(img);
 }
