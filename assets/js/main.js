@@ -157,6 +157,6 @@ const updateWeather = async (pos) => {
     alt: description,
     src: `https://openweathermap.org/img/wn/${icon}@2x.png`
   });
-  DOM.conditions.innerHTML = `${temp}&deg;C`;
+  DOM.conditions.innerHTML = `<span>${temp}&deg;C</span>`;
   DOM.conditions.prepend(img);
 }

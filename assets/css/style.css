@@ -27,21 +27,44 @@ main {
   position: absolute;
   bottom: 0;
   left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
   color: #1b1b1b;
   font-family: Courier New;
-  font-size: 1.5rem;
   font-size: clamp(1.6rem, calc(3rem - 1vw), 2.1rem);
   line-height: 1.4;
   margin: 1vh;
   padding: 8px 10px;
   border-radius: 4px;
 }
+main > * {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+}
 #weather-icon {
   width: 1em;
-  margin-left: 0.1em;
-  margin-right: 0.7em;
+  height: auto;
+  margin-right: 0.6em;
   vertical-align: text-top;
   scale: 2;
+}
+#locate {
+ position: relative;
+}
+#geolocate {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 2em;
+  height: 2em;
+  border-width: 1px;
+  border-radius: 50%;
 }
 #geolocate span {
   display: block;
