@@ -1,4 +1,4 @@
-import { logger, timeout, getById, createElement, kToC } from './utils.js';
+import { logger, showLoader, getById, createElement, kToC } from './utils.js';
 
 const DOM = {
   clock: getById('clock'),
@@ -10,7 +10,7 @@ const DOM = {
 }
 
 const init = async () => {
-  displayClock();
+  renderClock();
   
   const ipData = await getIPData();
 
@@ -19,11 +19,11 @@ const init = async () => {
     lon: ipData.longitude
   }
   await getLocationData(position);
-  displayIP(ipData.ip);
+  renderIP(ipData.ip);
 }
 document.addEventListener('DOMContentLoaded', init);
 
-const displayClock = () => {
+const renderClock = () => {
   const updateClock = () => {
     const d = new Date();
     const datestring = [
@@ -46,9 +46,8 @@ const getIPData = () => {
     });
 }
 
-const displayIP = async (data) => {
-  DOM.ip.textContent = 'loading...';
-  await timeout(500);
+const renderIP = async (data) => {
+  await showLoader(DOM.ip);
   DOM.ip.textContent = data;
 }
 
@@ -98,14 +97,13 @@ const getGeolocationData = async () => {
 const updatePosition = async (pos) => {
   removeLocationBtn();
 
-  DOM.coords.textContent = 'loading...';
-  await timeout(800);
+  await showLoader(DOM.coords);
   DOM.coords.textContent = Object.values(pos).map(n => n.toFixed(5)).join(' ');
   
-  displayLocationBtn();
+  renderLocationBtn();
 }
 
-const displayLocationBtn = async () => {
+const renderLocationBtn = async () => {
   if ('prompt' === await getGeolocationPermission()) {
     const btn = createElement('button', {
       id: 'geolocate',
@@ -139,8 +137,8 @@ const getWeatherData = (pos) => {
 }
 
 const updateWeather = async (pos) => {
-  DOM.city.textContent = 'loading...';
   DOM.conditions.textContent = '';
+  await showLoader(DOM.city);
 
   const data = await getWeatherData(pos);
   const city = data.name;
@@ -148,7 +146,6 @@ const updateWeather = async (pos) => {
   const description = data.weather[0].main;
   const icon = data.weather[0].icon;
   
-  await timeout(800);
   DOM.city.textContent = city;
 
   const img = createElement('img', {

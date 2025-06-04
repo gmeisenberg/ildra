@@ -5,8 +5,15 @@ export const logger = {
   error: (...msg) => console.error(...msg)
 };
 
-export const timeout = (ms) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+export const showLoader = (node, delay = 600) => {
+  return new Promise(resolve => {
+    node.textContent = '';
+    const interval = setInterval(() => node.append('.'), 100);
+    setTimeout(() => {
+      clearInterval(interval);
+      resolve();
+    }, delay);
+  });
 }
 
 export const getById = (id) => {
