@@ -24,17 +24,5 @@ $qs = ($DEBUG || $version)
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css<?php echo $qs; ?>" />
 	</head>
 	<body>
-    <main>
-      <div id="clock"></div>
-      <div id="weather">
-        <span id="city"></span>
-        <span id="conditions"></span>
-      </div>
-      <div id="position">
-        <span id="coords"></span>
-        <span id="locate"></span>
-      </div>
-      <div id="ip"></div>
-    </main>
   </body>
 </html>

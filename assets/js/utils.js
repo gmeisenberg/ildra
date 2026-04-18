@@ -15,18 +15,3 @@ export const showLoader = (node, delay = 600) => {
     }, delay);
   });
 }
-
-export const getById = (id) => {
-  const el = document.getElementById(id);
-  if (!el) {
-    throw new ReferenceError(`'${id}' not defined.`);
-  }
-  return el;
-}
-
-export const createElement = (type, options = {}) => {
-  const element = Object.assign(document.createElement(type), options);
-  return element;
-}
-
-export const kToC = (k) => parseInt(k - 273.15);
